@@ -41,4 +41,17 @@ We performed the model training on either a server with dedicated GPUs here at U
 - Numpy:		1.12.1
 - Pandas:		0.19.2
 - Seaborn:	0.8
+- Networkx:	1.11
+
+## DOcker
+
+[Dockerfile - as a default invoked by the "." in the end of docker build command below](./Dockerfile)
+
+
+```bash
+docker build -t utr .
+docker run -it utr
+```
+
+
 
