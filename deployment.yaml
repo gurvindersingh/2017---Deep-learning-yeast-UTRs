@@ -1,0 +1,126 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: utr
+  namespace: promec
+  labels:
+    kubernetes.io/name: "utr"
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: utr
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: utr
+  namespace: promec
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - utr.promec.ioudaas.no
+    secretName: utr-tls
+  rules:
+  - host: utr.promec.ioudaas.no
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: utr
+          servicePort: 80
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: utr
+  namespace: promec
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: utr
+        driver: nvidia-gpu
+    spec:
+      containers:
+      - name: auth-proxy
+        image: quay.io/uninett/goidc-proxy:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 30
+        volumeMounts:
+        - mountPath: /conf
+          name: oidcconfig
+        workingDir: /conf
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 150m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+      - name: utr
+        image: gurvin/utr
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 4096Mi
+            cpu: 4096m
+            alpha.kubernetes.io/nvidia-gpu: 1
+          requests:
+            memory: 4096Mi
+            cpu: 4096m
+            alpha.kubernetes.io/nvidia-gpu: 1
+        ports:
+        - containerPort: 8888
+          protocol: TCP
+        volumeMounts:
+          - name: data
+            mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: 3159176d-1216-4024-bef0-c4569daab9e0
+        - name: oidcconfig
+          secret:
+            defaultMode: 420
+            secretName: utr-dataporten
+
+---
+
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+  name: utr
+  namespace: promec
+spec:
+  podSelector:
+    matchLabels:
+      app: utr
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: kube-ingress
+      ports:
+        - protocol: TCP
+          port: 80
