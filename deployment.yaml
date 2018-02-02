@@ -84,11 +84,11 @@ spec:
         resources:
           limits:
             memory: 24Gi
-            cpu: 16384
+            cpu: 16384m
             alpha.kubernetes.io/nvidia-gpu: 1
           requests:
             memory: 24Gi
-            cpu: 16384
+            cpu: 16384m
             alpha.kubernetes.io/nvidia-gpu: 1
         ports:
         - containerPort: 8888
