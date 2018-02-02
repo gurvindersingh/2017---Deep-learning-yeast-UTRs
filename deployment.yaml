@@ -83,12 +83,12 @@ spec:
         imagePullPolicy: Always
         resources:
           limits:
-            memory: 4096Mi
-            cpu: 4096m
+            memory: 24Gi
+            cpu: 16384
             alpha.kubernetes.io/nvidia-gpu: 1
           requests:
-            memory: 4096Mi
-            cpu: 4096m
+            memory: 24Gi
+            cpu: 16384
             alpha.kubernetes.io/nvidia-gpu: 1
         ports:
         - containerPort: 8888
