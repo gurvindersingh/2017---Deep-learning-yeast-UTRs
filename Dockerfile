@@ -47,7 +47,6 @@ ENV NOTEBOOKS_CONFIG_DIR /etc/jupyter
 COPY jupyter_notebook_config.py $NOTEBOOKS_CONFIG_DIR/
 RUN conda install theano=1.0.1 keras==1.2.2 networkx==1.11 pandas seaborn pygpu=0.7.5 mkl-service pytorch=0.3.0 torchvision=0.2.0
 RUN pip install hyperopt==0.1 pycuda
-#RUN pip install https://github.com/lebedov/scikit-cuda.git#egg=scikit-cuda
 RUN chown -R $NB_UID:$NB_GID /data /opt/conda
 RUN conda clean -tipsy && apt autoclean
 RUN echo "[global]\ndevice=cuda\nfloatX=float32\n[gpuarray]\npreallocate=1\n[blas]\nldflags = -lopenblas\n" > $HOME/.theanorc
