@@ -45,7 +45,9 @@ ENV PATH /usr/local/nvidia/bin/:/usr/local/cuda-8.0/bin/:${PATH}
 RUN mkdir -p /data /data/notebooks
 ENV NOTEBOOKS_CONFIG_DIR /etc/jupyter
 COPY jupyter_notebook_config.py $NOTEBOOKS_CONFIG_DIR/
-RUN conda install theano=1.0.1 keras==1.2.2 networkx==1.11 pandas seaborn pygpu=0.7.5 mkl-service pytorch=0.3.0 torchvision=0.2.0
+RUN conda install theano=1.0.1 keras==1.2.2 networkx==1.11 pandas \
+    seaborn pygpu=0.7.5 mkl-service pytorch=0.3.0 torchvision=0.2.0 ipywidgets=7.1.1 \
+    tensorflow-gpu=1.4.1 tqdm=4.19.5
 RUN pip install hyperopt==0.1 pycuda
 RUN chown -R $NB_UID:$NB_GID /data /opt/conda
 RUN conda clean -tipsy && apt autoclean
