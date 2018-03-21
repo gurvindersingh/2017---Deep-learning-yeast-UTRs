@@ -34,6 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-driver-dev-$CUDA_PKG_VERSION \
         nano vim g++ liblapack-dev libopenblas-dev \
         git-core unzip less curl python-dev graphviz \
+        screen tmux \
         libcudnn7=$CUDNN_VERSION-1+cuda8.0 \
         libcudnn7-dev=$CUDNN_VERSION-1+cuda8.0 && \
     rm -rf /var/lib/apt/lists/*
